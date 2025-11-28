@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Features
+
+- feat(nextjs): Add Sentry.logger examples to example pages when logs feature is enabled
+
 ## 6.8.0
 
 ### Features
