@@ -4,7 +4,7 @@
 
 ### Features
 
-- feat(nextjs): Add Sentry.logger examples to example pages when logs feature is enabled
+- Add Sentry.logger examples to example pages when logs are enabled ([#1127](https://github.com/getsentry/sentry-wizard/pull/1127))
 
 ## 6.8.0
 
