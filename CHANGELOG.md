@@ -4,7 +4,7 @@
 
 ### Features
 
-- feat(nextjs): Add Biome support and fix linting issues in generated code ([#TBD](https://github.com/getsentry/sentry-wizard/pull/TBD))
+- feat(nextjs): Add Biome support and fix linting issues in generated code ([#1128](https://github.com/getsentry/sentry-wizard/pull/1128))
 
   - The Next.js wizard now detects if Biome is installed and offers to run `biome check --write` on generated files
   - Fixed generated code templates to pass Biome and ESLint checks:
