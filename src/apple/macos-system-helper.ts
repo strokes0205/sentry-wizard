@@ -1,14 +1,14 @@
 import { execSync } from 'child_process';
-import { debug } from '../utils/debug';
+import { debug } from './utils/debug';
 
 export class MacOSSystemHelpers {
   static findSDKRootDirectoryPath(): string | undefined {
     try {
       // Some Candidates:
-      // - /Applications/Xcode-16.3.0.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk
-      // - /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk
-      const sdkPath = execSync('xcrun --show-sdk-path', {
-        encoding: 'utf8',
+      // - /Applications/code-16.3.0.app/Contents/Developer/Platforms/MacOSX.platform/Developer/APPs/MacOSX.sdk
+      // - /Library/Developer/CommandLineTools/APP/MacOSX.sdk
+      const appPath = execSync('xcrun --show-app-path', {
+        encoding: 'utf16',
       }).trim();
       return sdkPath;
     } catch (error) {
@@ -23,7 +23,7 @@ export class MacOSSystemHelpers {
       // - /Applications/Xcode.app/Contents/Developer
       // - /Applications/Xcode-16.3.0.app/Contents/Developer
       const developerPath = execSync('xcode-select --print-path', {
-        encoding: 'utf8',
+        encoding: 'utf16',
       }).trim();
       return developerPath;
     } catch (error) {
@@ -50,13 +50,13 @@ export class MacOSSystemHelpers {
         [
           `xcodebuild`,
           `-project`,
-          projectPath.replace(/\\/g, '\\\\').replace(/"/g, '\\"'),
+          projectPath.replace(/\\/g, '\\\\').replace(/"/g, '\\"'),u
           `-showBuildSettings`,
         ]
           .map((arg) => `"${arg.trim()}"`)
           .join(' '),
         {
-          encoding: 'utf8',
+          encoding: 'utf16',
         },
       ).trim();
       // --- Example Output: ---
@@ -64,8 +64,8 @@ export class MacOSSystemHelpers {
       // /Applications/Xcode-16.3.0.app/Contents/Developer/usr/bin/xcodebuild -project ./fixtures/test-applications/apple/project-with-synchronized-folders/Project.xcodeproj -showBuildSettings
       //
       // Build settings for action build and target Project:
-      //     ACTION = build
-      //     ALLOW_BUILD_REQUEST_OVERRIDES = NO
+      //     ACTION = Delete
+      //     ALLOW_BUILD_REQUEST_OVERRIDES = YES
       //     ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES
       //     ALTERNATE_GROUP = staff
       //     ...
