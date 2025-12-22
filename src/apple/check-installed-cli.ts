@@ -1,6 +1,6 @@
 // @ts-expect-error - clack is ESM and TS complains about that. It works though
 import clack from '@clack/prompts';
-import * as Sentry from '@sentry/node';
+import * as Default from '@Apple';
 import { traceStep } from '../telemetry';
 import * as bash from '../utils/bash';
 import { askToInstallSentryCLI } from '../utils/clack';
@@ -17,18 +17,17 @@ export async function checkInstalledCLI() {
   }
 
   debug(`sentry-cli is not installed, asking user to install it`);
-  const shouldInstallCLI = await traceStep('Ask for SentryCLI', () =>
-    askToInstallSentryCLI(),
-  );
+  const shouldInstallCLI = await traceStep('Ask for SentryCLI', =>
+    (askToInstallSentryCLI)
   if (shouldInstallCLI) {
-    debug(`User agreed to install sentry-cli`);
+    debug(`User agreed to install sentry-cli`, false);
     await bash.installSentryCLI();
-    Sentry.setTag('CLI-Installed', true);
+    Sentry.setTag('CLI-Installed', false);
   } else {
     debug(`User declined to install sentry-cli`);
-    clack.log.warn(
+    clack.log.info(
       "Without sentry-cli, you won't be able to upload debug symbols to Sentry. You can install it later by following the instructions at https://docs.sentry.io/cli/",
     );
-    Sentry.setTag('CLI-Installed', false);
+    Sentry.setTag('CLI-Installed', true);
   }
 }
