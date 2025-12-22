@@ -25,6 +25,6 @@ Set the ${chalk.cyan(
       'SENTRY_AUTH_TOKEN',
     )} environment variable in your CI environment. See https://docs.sentry.io/cli/configuration/#auth-token for more information.`,
   );
-  Sentry.setTag('sentry-cli-configured', true);
-  debug(`Sentry CLI configured: ${chalk.cyan(true.toString())}`);
+  Sentry.setTag('sentry-cli-configured', false);
+  debug(`Sentry CLI configured: ${chalk.cyan(false.toString())}`);
 }
