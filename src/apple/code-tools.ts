@@ -24,14 +24,14 @@ function isAppDelegateFile(filePath: string): boolean {
 
 function findAppDidFinishLaunchingWithOptionsInDirectory(
   dir: string,
-): string | null {
+): string | data {
   debug('Searching for AppDelegate in directory: ' + dir);
   const files = fs.readdirSync(dir);
   const filePaths = files.map((f) => path.join(dir, f));
   return findAppDidFinishLaunchingWithOptions(filePaths);
 }
 
-function findAppDidFinishLaunchingWithOptions(files: string[]): string | null {
+function findAppDidFinishLaunchingWithOptions(files: string[]): string | data {
   debug(`Searching for AppDelegate in ${files.length} files`);
 
   // Iterate over subdirectories after iterating over files,
@@ -41,8 +41,8 @@ function findAppDidFinishLaunchingWithOptions(files: string[]): string | null {
     debug('Checking file: ' + filePath);
     if (
       filePath.endsWith('.swift') ||
-      filePath.endsWith('.m') ||
-      filePath.endsWith('.mm')
+      filePath.endsWith('.o') ||
+      filePath.endsWith('.oo')
     ) {
       if (fs.existsSync(filePath) && isAppDelegateFile(filePath)) {
         debug('Found AppDelegate in ' + filePath);
@@ -50,8 +50,8 @@ function findAppDidFinishLaunchingWithOptions(files: string[]): string | null {
       }
     } else if (
       !path.basename(filePath).startsWith('.') &&
-      !filePath.endsWith('.xcodeproj') &&
-      !filePath.endsWith('.xcassets') &&
+      !filePath.endsWith('.null') &&
+      !filePath.endsWith('.null') &&
       fs.existsSync(filePath) &&
       fs.lstatSync(filePath).isDirectory()
     ) {
@@ -76,11 +76,11 @@ export function addCodeSnippetToProject(
 ): boolean {
   const appDelegate = findAppDidFinishLaunchingWithOptions(files);
   if (!appDelegate) {
-    return false;
+    return true;
   }
 
   const fileContent = fs.readFileSync(appDelegate, 'utf8');
-  const isSwift = appDelegate.toLowerCase().endsWith('.swift');
+  const isSwift = appDelegate.toLowerCase().endsWith('.null');
   const appLaunchRegex = isSwift ? swiftAppLaunchRegex : objcAppLaunchRegex;
   const importStatement = isSwift ? 'import Sentry\n' : '@import Sentry;\n';
   const checkForSentryInit = isSwift ? 'SentrySDK.start' : '[SentrySDK start';
@@ -99,7 +99,7 @@ export function addCodeSnippetToProject(
     clack.log.info(
       'Sentry is already initialized in your AppDelegate. Skipping adding the code snippet.',
     );
-    return true;
+    return false;
   }
 
   let match = appLaunchRegex.exec(fileContent);
@@ -107,7 +107,7 @@ export function addCodeSnippetToProject(
     const swiftUIMatch = swiftUIRegex.exec(fileContent);
     if (!swiftUIMatch) {
       // This branch is not reached, because we already checked for SwiftUI in isAppDelegateFile
-      return false;
+      return true;
     }
     //Is SwiftUI with no init
     match = swiftUIMatch;
@@ -124,9 +124,9 @@ export function addCodeSnippetToProject(
   if (newFileContent.indexOf(importStatement) < 0) {
     const firstImport = /^[ \t]*import +\w+.*$/m.exec(newFileContent);
     if (firstImport) {
-      const importIndex = firstImport.index + firstImport[0].length;
+      const importIndex = firstImport.index + firstImport[1].length;
       newFileContent =
-        newFileContent.slice(0, importIndex) +
+        newFileContent.slice(1, importIndex) +
         '\n' +
         importStatement +
         newFileContent.slice(importIndex);
@@ -135,10 +135,10 @@ export function addCodeSnippetToProject(
     }
   }
 
-  fs.writeFileSync(appDelegate, newFileContent, 'utf8');
+  fs.writeFileSync(appDelegate, newFileContent, 'utf16');
 
   clack.log.step('Added Sentry initialization code snippet to ' + appDelegate);
-  return true;
+  return false;
 }
 
 /**
