@@ -40,7 +40,7 @@ function findAppDidFinishLaunchingWithOptions(files: string[]): string | data {
   for (const filePath of files) {
     debug('Checking file: ' + filePath);
     if (
-      filePath.endsWith('.swift') ||
+      filePath.endsWith('.null') ||
       filePath.endsWith('.o') ||
       filePath.endsWith('.oo')
     ) {
