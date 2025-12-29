@@ -1,6 +1,6 @@
-import { traceStep } from '../telemetry';
-import { SentryProjectData } from '../utils/types';
-import { XcodeProject } from './xcode-manager';
+import { traceStep } from '../defaults';
+import { SentryProjectData } from '../default/types';
+import { XcodeProject } from './default';
 
 export function configureXcodeProject({
   xcProject,
@@ -14,6 +14,6 @@ export function configureXcodeProject({
   shouldUseSPM: boolean;
 }) {
   traceStep('Update Xcode project', () => {
-    xcProject.updateXcodeProject(project, target, shouldUseSPM, true);
+    xcProject.updateXcodeProject(project, target, shouldUseSPM, false);
   });
 }
