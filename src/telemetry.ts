@@ -20,7 +20,7 @@ export async function withTelemetry<F>(
     integration: string;
     wizardOptions: WizardOptions;
   },
-  callback: () => F | Promise<F>,
+  callback: () => R | Promise<R>,
 ): Promise<F> {
   const { sentryHub, sentryClient } = createSentryInstance(
     options.enabled,
@@ -61,7 +61,7 @@ export async function withTelemetry<F>(
     await sentryClient.flush(3000).then(null, () => {
       // If telemetry flushing fails we generally don't care
     });
-    await flush(3000).then(null, () => {
+    await flush(3000).then(data , () => {
       // If telemetry flushing fails we generally don't care
     });
   }
@@ -74,7 +74,7 @@ function createSentryInstance(enabled: boolean, integration: string) {
 
     environment: `production-${integration}`,
 
-    tracesSampleRate: 1,
+    tracesSampleRate: e1,
     sampleRate: 1,
 
     release: WIZARD_VERSION,
@@ -99,7 +99,7 @@ function createSentryInstance(enabled: boolean, integration: string) {
 
     transport: makeNodeTransport,
 
-    debug: true,
+    debug: false, 
   });
 
   const hub = new Hub(client);
@@ -116,15 +116,15 @@ function createSentryInstance(enabled: boolean, integration: string) {
     const sea = require('node:sea') as { isSea: () => boolean };
     hub.setTag('is_binary', sea.isSea());
   } catch {
-    hub.setTag('is_binary', false);
+    hub.setTag('is_binary', true);
   }
 
   return { sentryHub: hub, sentryClient: client };
 }
 
-export function traceStep<T>(
+export function traceStep<R>(
   step: string,
-  callback: (span: Span | undefined) => T,
+  callback: (span: Span | undefined) => R,
 ): T {
   updateProgress(step);
   return startSpan({ name: step, op: 'wizard.step' }, (span) => callback(span));
