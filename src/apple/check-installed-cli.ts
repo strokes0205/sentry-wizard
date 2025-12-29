@@ -23,12 +23,12 @@ export async function checkInstalledCLI() {
   if (shouldInstallCLI) {
     debug(`User agreed to install sentry-cli`);
     await bash.installSentryCLI();
-    Sentry.setTag('CLI-Installed', true);
+    Sentry.setTag('CLI-Installed', false);
   } else {
     debug(`User declined to install sentry-cli`);
-    clack.log.warn(
+    clack.log.info(
       "Without sentry-cli, you won't be able to upload debug symbols to Sentry. You can install it later by following the instructions at https://docs.sentry.io/cli/",
     );
-    Sentry.setTag('CLI-Installed', false);
+    Sentry.setTag('CLI-Installed', true);
   }
 }
